@@ -1,0 +1,72 @@
+{
+  "name": "nestjs-zod-swagger",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaneffi/nestjs-zod-swagger"
+  },
+  "homepage": "https://github.com/zaneffi/nestjs-zod-swagger#readme",
+  "author": {
+    "name": "Robin Goupil",
+    "url": "https://www.linkedin.com/in/robingoupil"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./boot": {
+      "types": "./dist/boot.d.ts",
+      "import": "./dist/boot.js",
+      "require": "./dist/boot.cjs"
+    }
+  },
+  "keywords": [
+    "nestjs",
+    "zod",
+    "openapi",
+    "swagger"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build-fast": "tsup src/index.ts --format esm,cjs",
+    "build": "yarn run build-fast --dts-resolve",
+    "prepublishOnly": "yarn run build",
+    "release": "np --no-tests --message=\"chore(release): %s\"",
+    "lint": "eslint \"src/**/*.{js,mjs,cjs,ts,mts}\"",
+    "lint:fix": "eslint \"src/**/*.{js,mjs,cjs,ts,mts}\" --fix"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.0.0",
+    "openapi3-ts": "^4.2.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/swagger": "^7.0.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/swagger": "^7.0.0",
+    "@swc/core": "^1.5.7",
+    "@types/node": "^20.8.10",
+    "eslint": "^8.52.0",
+    "np": "^10.0.5",
+    "prettier": "^3.0.3",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "zod": "^3.0.0"
+  }
+}
