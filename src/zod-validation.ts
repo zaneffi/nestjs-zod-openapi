@@ -1,15 +1,23 @@
 import { ZodOpenAPIInternalMetadata, ZodOpenApiFullMetadata } from '@asteasolutions/zod-to-openapi/dist/zod-extensions';
 import { ZodObject, ZodType, ZodTypeDef, z } from 'zod';
 
-export abstract class ZodClass<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> {
-  readonly name!: string;
-  schema!: ZodType<Output, Def, Input>;
-}
+const ZodClassSymbol = Symbol('ZodClass');
+
+type ZodClassInternal<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> = {
+  [ZodClassSymbol]: true;
+  schema: ZodType<Output, Def, Input>;
+  new (): Output;
+};
+
+export type ZodClass<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> = {
+  schema: ZodType<Output, Def, Input>;
+  new (): Output;
+};
 
 export function isZodDTO<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(
   type: unknown,
-): type is ZodClass<Output, Def, Input> {
-  return isZodDTOSchema((type as any)?.schema);
+): type is ZodClassInternal<Output, Def, Input> {
+  return !!(type && typeof type  === 'object' && ZodClassSymbol in type && isZodDTOSchema((type as ZodClassInternal<Output, Def, Input>).schema));
 };
 
 export function isZodDTOSchema<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(
@@ -50,15 +58,19 @@ function createZodDto<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input =
       value: finalSchema,
       writable: false,
     },
+    [ZodClassSymbol]: {
+      value: true,
+      writable: false,
+    },
   });
 
-  return clazz as never;
+  return clazz as ZodClassInternal<Output, Def, Input> as ZodClass<Output, Def, Input>;
 };
 
 declare module 'zod' {
   interface ZodType<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output> {
-    class<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(this: ZodType<Output, Def, Input>): typeof ZodClass<Output, Def, Input>;
-    class<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(this: ZodType<Output, Def, Input>, options: CreateZodDtoOptions): typeof ZodClass<Output, Def, Input>;
+    class<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(this: ZodType<Output, Def, Input>): ZodClass<Output, Def, Input>;
+    class<Output = any, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(this: ZodType<Output, Def, Input>, options: CreateZodDtoOptions): ZodClass<Output, Def, Input>;
   }
 }
 
@@ -70,7 +82,7 @@ export function extendZodWithClass(zod: typeof z) {
     return;
   }
 
-  z.ZodType.prototype.class = function(options?: CreateZodDtoOptions) {
-    return createZodDto(this, options) as never;
+  z.ZodType.prototype.class = function(this, options?: CreateZodDtoOptions): ZodClass<typeof this["_output"], typeof this["_def"], typeof this["_input"]> {
+    return createZodDto(this, options);
   }
 }

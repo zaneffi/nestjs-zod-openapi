@@ -1,13 +1,16 @@
 {
-  "name": "nestjs-zod-swagger",
+  "name": "nestjs-zod-openapi",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zaneffi/nestjs-zod-swagger"
+    "url": "git+https://github.com/zaneffi/nestjs-zod-openapi"
   },
-  "homepage": "https://github.com/zaneffi/nestjs-zod-swagger#readme",
+  "homepage": "https://github.com/zaneffi/nestjs-zod-openapi#readme",
   "author": {
     "name": "Robin Goupil",
     "url": "https://www.linkedin.com/in/robingoupil"
