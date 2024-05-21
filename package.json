@@ -44,7 +44,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build-fast": "tsup src/index.ts --format esm,cjs",
+    "build-fast": "tsup src/index.ts src/boot.ts --format esm,cjs",
     "build": "yarn run build-fast --dts-resolve",
     "prepublishOnly": "yarn run build",
     "release": "np --no-tests --message=\"chore(release): %s\"",
