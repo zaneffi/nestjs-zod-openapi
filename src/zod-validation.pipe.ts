@@ -13,7 +13,7 @@ export class ZodValidationPipe implements PipeTransform {
         return value;
       }
       const parsedValue = schema.parse(value);
-      return parsedValue;
+      return metadata.metatype ? Object.assign(new metadata.metatype(), parsedValue) : parsedValue;
     } catch (error) {
       if (error instanceof ZodError) {
         throw new BadRequestException(error.errors);
